@@ -19,17 +19,18 @@
 
 ### 相关论文及代码参考
 
-|论文名称|论文链接|代码链接|
-|-------|-------|-------|
-|SPFormer|[AAAI2023](https://arxiv.org/abs/2211.15766)|[Github](https://github.com/sunjiahao1999/SPFormer)|
-|OneFormer3D|[CVPR2024](https://arxiv.org/abs/2311.14405)|[Github](https://github.com/filaPro/oneformer3d)|
+| 论文名称    | 论文链接                                                             | 代码链接                                         |
+| ----------- | -------------------------------------------------------------------- | ------------------------------------------------ |
+| SPFormer    | [AAAI2023](https://arxiv.org/abs/2211.15766) \| [pdf](pdf\SPFormer.pdf)  | [Github](https://github.com/sunjiahao1999/SPFormer) |
+| OneFormer3D | [CVPR2024](https://arxiv.org/abs/2311.14405) \| [pdf](pdf\OneFormer.pdf) | [Github](https://github.com/filaPro/oneformer3d)    |
 
 > OneFormer是基于SPFormer网络结构添加部分改进实现的
 
 ### 进度安排
 
-- [x] 下载ScanNet数据集（下载的非完整数据集）
+- [X] 下载ScanNet数据集（下载的非完整数据集）
 - [ ] 基于上述框架提供代码对数据集进行预处理（实现了SPFormer框架的数据预处理）
 - [ ] 基于上述框架实现模型评测、训练（实现了SPFormer框架模型的评测，训练中）
 - [ ] 基于上述框架提出相关改进方法，并完成代码编写
 - [ ] 训练改进后的模型，并分别进行评测
+- [ ] 基于改进方法和评测结果编写报告及答辩PPT
