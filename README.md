@@ -19,11 +19,13 @@
 
 ### 相关论文及代码参考
 
-| 论文名称    | 论文链接                                                             | 代码链接                                         |
-| ----------- | -------------------------------------------------------------------- | ------------------------------------------------ |
-| Superpoint Transformer    | [ICCV2023](http://arxiv.org/abs/2306.08045) \| [pdf](pdf/Superpoint_Transformer.pdf)  | [Github](https://github.com/drprojects/superpoint_transformer) |
-| SPFormer    | [AAAI2023](https://arxiv.org/abs/2211.15766) \| [pdf](pdf\SPFormer.pdf)  | [Github](https://github.com/sunjiahao1999/SPFormer) |
-| OneFormer3D | [CVPR2024](https://arxiv.org/abs/2311.14405) \| [pdf](pdf\OneFormer.pdf) | [Github](https://github.com/filaPro/oneformer3d)    |
+| 论文名称    | 任务  | 论文链接                                                             | 代码链接                                         |
+| ----------- | -------------------------------------------------------------------- | ------------------------------------------------ | ----------- |
+| Superpoint Transformer    | Semantic Segmentation | [ICCV2023](http://arxiv.org/abs/2306.08045) \| [pdf](pdf/Superpoint_Transformer.pdf)  | [Github](https://github.com/drprojects/superpoint_transformer) |
+| SPFormer    | Instance Segmentation | [AAAI2023](https://arxiv.org/abs/2211.15766) \| [pdf](pdf\SPFormer.pdf)  | [Github](https://github.com/sunjiahao1999/SPFormer) |
+| OneFormer3D | All in One | [CVPR2024](https://arxiv.org/abs/2311.14405) \| [pdf](pdf\OneFormer.pdf) | [Github](https://github.com/filaPro/oneformer3d)    |
+| UniDet3D | Object Detection | [AAAI2025](https://arxiv.org/abs/2409.04234) \| [pdf](pdf/UniDet3D.pdf) | [Github](https://github.com/filapro/unidet3d) |
+
 
 > OneFormer是基于SPFormer网络结构添加部分改进实现的
 

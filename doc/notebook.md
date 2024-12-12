@@ -6,7 +6,6 @@
 
 ![](assets/image.png)
 
-
 ## 开源评测数据集
 
 - [S3DIS](https://paperswithcode.com/dataset/s3dis): `temp/data/S3DIS` `4.1G`  （已下载完成）
