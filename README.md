@@ -25,6 +25,7 @@
 | SPFormer    | Instance Segmentation | [AAAI2023](https://arxiv.org/abs/2211.15766) \| [pdf](pdf/SPFormer.pdf)  | [Github](https://github.com/sunjiahao1999/SPFormer) |
 | OneFormer3D | All in One | [CVPR2024](https://arxiv.org/abs/2311.14405) \| [pdf](pdf/OneFormer.pdf) | [Github](https://github.com/filaPro/oneformer3d)    |
 | UniDet3D | Object Detection | [AAAI2025](https://arxiv.org/abs/2409.04234) \| [pdf](pdf/UniDet3D.pdf) | [Github](https://github.com/filapro/unidet3d) |
+| pillarnext | Object Detection | [CVPR2023](https://arxiv.org/pdf/2405.09828v1) \| [pdf](pdf/pillarnext.pdf) | [Github](https://github.com/qcraftai/pillarnext) |
 
 
 > OneFormer是基于SPFormer网络结构添加部分改进实现的
