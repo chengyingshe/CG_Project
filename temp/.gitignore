@@ -1,0 +1,4 @@
+*
+!.gitignore
+!test_results/
+!test_results/**

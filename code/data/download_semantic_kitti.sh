@@ -9,5 +9,5 @@ if [ ! -d $data_dir ]; then
 fi
 
 wget -P $data_dir -c https://s3.eu-central-1.amazonaws.com/avg-kitti/data_odometry_velodyne.zip
-# wget -P $data_dir http://www.cvlibs.net/download.php?file=data_odometry_calib.zip
-# wget -P $data_dir http://www.semantic-kitti.org/assets/data_odometry_labels.zip
+wget -P $data_dir -c https://s3.eu-central-1.amazonaws.com/avg-kitti/data_odometry_calib.zip
+wget -P $data_dir -c http://www.semantic-kitti.org/assets/data_odometry_labels.zip
