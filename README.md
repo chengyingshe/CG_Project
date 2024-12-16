@@ -43,4 +43,39 @@
 
 评测结果位于: `temp/test_results`文件夹中
 
-- 
+### 训练和评测方法
+
+项目路径：`/home/scy/CG_Project` (超链接)
+
+1. `SPFormer`
+
+    ```shell
+    cd temp/SPFormer
+    conda activate cg-proj
+    python tools/train.py configs/spf_scannet.yaml  # train
+
+    python tools/test.py configs/spf_scannet.yaml checkpoints/spf_scannet_512.pth --out <output_path>  # test
+
+    python tools/visualization.py --prediction_path <output_path>   # visualization (<output_path>就是test中的--out参数)
+    ```
+
+2. `OneFormer3d`
+
+    ```shell
+    cd code
+    docker container ls  # 查看运行中的docker容器，如果存在下面所示的名为`oneformer`的容器，则跳过下一步
+    # CONTAINER ID   IMAGE          COMMAND                  CREATED        STATUS        PORTS     NAMES
+    # cc9af17dcc02   c2c798b4d33c   "/opt/nvidia/nvidia_…"   13 hours ago   Up 13 hours             oneformer
+    bash run_docker.sh  # 存在则跳过这一步，直接执行下一条命令
+    bash enter_docker.sh  # 进入docker容器
+    cd oneformer3d
+
+    # scannetv2
+    # train
+    python tools/train.py configs/oneformer3d_1xb4_scannet.py
+    # test
+    python tools/test.py configs/oneformer3d_1xb4_scannet.py checkpoints/oneformer3d_scannetv2-epoch_112.pth
+    # 修改配置文件和模型可以更换使用的数据集
+    ```
+
+将评测结果保存到`temp/test_results`文件夹中，注意文件命名方式，可以参考我的文件命名方式
