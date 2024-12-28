@@ -115,7 +115,7 @@ class InstanceCriterion(nn.Module):
         self.matcher = TASK_UTILS.build(matcher)
         class_weight = [1] * num_classes + [non_object_weight]
         self.class_weight = class_weight
-        self.loss_weight = nn.Parameter(torch.abs(torch.tensor(loss_weight)), requires_grad=True)
+        self.loss_weight = nn.Parameter(torch.ones(4), requires_grad=True)
         self.num_classes = num_classes
         self.fix_dice_loss_weight = fix_dice_loss_weight
         self.iter_matcher = iter_matcher
@@ -126,13 +126,16 @@ class InstanceCriterion(nn.Module):
         self.use_boundary = use_boundary
         self.boundary_weight = boundary_weight
         
-        self.log_vars = nn.Parameter(torch.zeros(6).clamp(-10, 10))
+        self.log_vars = nn.Parameter(torch.zeros(6).clamp(-10, 10), requires_grad=True)
 
     def get_balanced_loss(self, losses):
-        weights = torch.softmax(self.log_vars, dim=0)
-        # 添加数值稳定性
-        balanced_loss = sum([w * l / (torch.exp(v) + 1e-8) for w, l, v in 
-                        zip(self.loss_weight, losses, self.log_vars)])
+        balanced_loss = (
+            self.loss_weight[0] * losses[0] +
+            self.loss_weight[1] * losses[1] +
+            self.loss_weight[2] * losses[2] +
+            self.loss_weight[3] * losses[3])
+        # print('####loss_weight:', self.loss_weight)
+        # print('####balanced_loss:', balanced_loss)
         return balanced_loss
 
     def improved_dice_loss(self, inputs, targets):
@@ -153,6 +156,7 @@ class InstanceCriterion(nn.Module):
 
     def compute_boundary_loss(self, pred_mask, gt_mask):
         """计算边界感知损失."""
+        
         def get_boundary(mask):
             if len(mask.shape) == 2:
                 mask = mask.unsqueeze(0).unsqueeze(0)
@@ -174,26 +178,30 @@ class InstanceCriterion(nn.Module):
             boundary = F.conv2d(pad, laplacian_kernel, groups=mask.shape[1])
             return boundary.squeeze()
 
+        
         pred_mask = pred_mask.float()
         gt_mask = gt_mask.float()
 
         pred_boundary = get_boundary(pred_mask)
         gt_boundary = get_boundary(gt_mask)
+
+        # 归一化边界强度到[0,1]范围
+        pred_boundary = pred_boundary / (pred_boundary.max() + 1e-8)
+        gt_boundary = gt_boundary / (gt_boundary.max() + 1e-8)
         
-        boundary_weight = gt_boundary * 5.0 + 1.0
+        # 使用平衡权重
+        pos_weight = (gt_boundary < 0.5).float().sum() / (gt_boundary >= 0.5).float().sum().clamp(min=1e-8)
+        boundary_weight = torch.where(gt_boundary >= 0.5, 
+                                    pos_weight * torch.ones_like(gt_boundary),
+                                    torch.ones_like(gt_boundary))
         
-        if pred_boundary.shape != gt_boundary.shape:
-            if len(pred_boundary.shape) != len(gt_boundary.shape):
-                if len(pred_boundary.shape) > len(gt_boundary.shape):
-                    gt_boundary = gt_boundary.unsqueeze(0)
-                else:
-                    pred_boundary = pred_boundary.unsqueeze(0)
-        
+        # 添加L1损失来稳定训练
+        boundary_l1 = F.l1_loss(pred_boundary, gt_boundary)
         boundary_bce = F.binary_cross_entropy_with_logits(
             pred_boundary, gt_boundary, 
             weight=boundary_weight)
-        
-        return boundary_bce
+            
+        return boundary_bce + 0.5 * boundary_l1  # 结合BCE和L1损失
 
     def get_layer_loss(self, aux_outputs, insts, indices=None):
         """计算中间层的损失."""
@@ -319,8 +327,8 @@ class InstanceCriterion(nn.Module):
 
         # 计算所有损失项
         losses = self._compute_losses(cls_preds, pred_scores, pred_masks, insts, indices)
-        
         # 动态平衡损失
+        # print('####losses:', losses)
         total_loss = self.get_balanced_loss(list(losses.values()))
 
         # 添加辅助损失
