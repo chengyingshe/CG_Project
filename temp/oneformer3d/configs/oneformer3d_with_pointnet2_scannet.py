@@ -8,6 +8,7 @@ custom_imports = dict(imports=['oneformer3d'])
 num_channels = 32  # 32
 num_instance_classes = 18
 num_semantic_classes = 20
+num_epochs = 50
 
 model = dict(
     type='ScanNetOneFormer3DWithPointNet2',
@@ -212,10 +213,10 @@ test_evaluator = val_evaluator
 
 optim_wrapper = dict(
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=1.5e-6, weight_decay=0.05),
+    optimizer=dict(type='AdamW', lr=1e-5, weight_decay=0.05),
     clip_grad=dict(max_norm=10, norm_type=2))
 
-param_scheduler = dict(type='PolyLR', begin=0, end=512, power=0.5)
+param_scheduler = dict(type='PolyLR', begin=0, end=num_epochs, power=0.8)
 
 custom_hooks = [dict(type='EmptyCacheHook', after_iter=True)]
 default_hooks = dict(
@@ -225,7 +226,7 @@ load_from = 'work_dirs/tmp/sstnet_scannet.pth'
 
 train_cfg = dict(
     type='EpochBasedTrainLoop',
-    max_epochs=100,
-    dynamic_intervals=[(1,100),(512 - 100,1)])
+    max_epochs=num_epochs,
+    dynamic_intervals=[(1,num_epochs),(num_epochs,1)])
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')

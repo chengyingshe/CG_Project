@@ -8,6 +8,7 @@ custom_imports = dict(imports=['oneformer3d'])
 num_channels = 32  # 32
 num_instance_classes = 18
 num_semantic_classes = 20
+num_epochs = 50
 
 model = dict(
     type='ScanNetOneFormer3D',
@@ -34,7 +35,7 @@ model = dict(
         d_model=128,  # 256
         num_heads=4,  # 8
         hidden_dim=256,  # 512
-        dropout=0.1,  # 0.0
+        dropout=0.0,  # 0.0
         activation_fn='gelu',
         iter_pred=True,
         attn_mask=True,
@@ -177,6 +178,8 @@ train_dataloader = dict(
         scene_idxs=None,
         test_mode=False))
 val_dataloader = dict(
+    batch_size=2,
+    num_workers=8,
     dataset=dict(
         type=dataset_type,
         ann_file='scannet_oneformer3d_infos_val.pkl',
@@ -228,7 +231,7 @@ load_from = 'work_dirs/tmp/sstnet_scannet.pth'
 
 train_cfg = dict(
     type='EpochBasedTrainLoop',
-    max_epochs=100,
-    dynamic_intervals=[(1,100),(512 - 100,1)])
+    max_epochs=num_epochs,
+    dynamic_intervals=[(1,num_epochs),(num_epochs,1)])
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')

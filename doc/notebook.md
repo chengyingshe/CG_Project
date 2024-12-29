@@ -9,7 +9,7 @@
 ## 开源评测数据集
 
 - [S3DIS](https://paperswithcode.com/dataset/s3dis): `temp/data/S3DIS` `17G`  （已下载完成）
-- [ScanNet](http://www.scan-net.org/): `temp/data/scannetv2` `21G`（已下载完成，前者包含完整未处理数据，后者包含部分数据，但是已经处理过）
+- [ScanNet](http://www.scan-net.org/): `temp/data/scannetv2` `21G`（已下载完成）
 - [KITTI](https://www.cvlibs.net/datasets/kitti/): `temp/data/KITTI` `39G`  （已经下载完成）
 - [Semantic KITTI](http://www.semantic-kitti.org/): `temp/data/SemanticKITTI` `80G`（已经下载完成）
 
@@ -35,6 +35,8 @@
 
 3. 使用`PointTransformerV3`中的改进后的`PointEmbedding`层替代原始网络中的`Sparse 3D U-Net`
 
+==注意：受限于实验设备资源（单张Nvidia RTX3090显卡24GB显存），我们调整了原OneFormer3D模型的参数量，将`ScanNetQueryDecoder`中的`num_layers`从`6`修改成了`3`，`d_model`从`256`修改成了`128`，`num_heads`从`8`修改成了`4`，`hidden_dim`从`512`修改成了`256`，之后的模型结构修改都是基于这个基本模型骨架，以下是修改后的各模型参数量的对比：==
+
 | Point Cloud Embedding | Sparse 3D U-Net   | PointNet++  | PTV2  | PTV3 |
 | ---------- | -------- | ---- | ---- | ---- |
 | Parameters | 11624616 |2516400|671496|688360|
@@ -44,6 +46,11 @@
 
 
 ### 修改损失函数
+
+- 将原来的平衡权重修改成了可训练的参数
+- 添加边界损失（boundary_loss）
+- 在dice_loss中添加了focal_loss，用于平衡样本分布不均的问题
+- 对于各个损失部分都添加了数值稳定处理，防止其中某一个损失函数对训练的影响较大
 
 ## 实验结果分析
 

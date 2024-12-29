@@ -98,6 +98,8 @@ class ScanNetOneFormer3DMixin:
 
         # score_thr
         score_mask = scores > score_threshold
+        
+        print('####scores:', scores)
         scores = scores[score_mask]
         labels = labels[score_mask]
         mask_pred = mask_pred[score_mask]

@@ -8,6 +8,7 @@ custom_imports = dict(imports=['oneformer3d'])
 num_channels = 32  # 32
 num_instance_classes = 18
 num_semantic_classes = 20
+num_epochs = 50
 
 model = dict(
     type='ScanNetOneFormer3DWithPTV3Encoder',
@@ -18,7 +19,10 @@ model = dict(
     num_classes=num_instance_classes,
     min_spatial_shape=128,
     query_thr=0.5,
-    backbone=None,
+    backbone=dict(
+        type='SpConvUNet',
+        num_planes=[num_channels * (i + 1) for i in range(5)],
+        return_blocks=True),
     decoder=dict(
         type='ScanNetQueryDecoder',
         num_layers=3,  # 6
@@ -45,7 +49,7 @@ model = dict(
             ignore_index=num_semantic_classes,
             loss_weight=0.2),
         inst_criterion=dict(
-            type='InstanceCriterionWithDynamicWeight',  # 可训练权重
+            type='InstanceCriterionV2',
             matcher=dict(
                 type='SparseMatcher',
                 costs=[
@@ -53,7 +57,7 @@ model = dict(
                     dict(type='MaskBCECost', weight=1.0),
                     dict(type='MaskDiceCost', weight=1.0)],
                 topk=1),
-            # loss_weight=[0.5, 1.0, 1.0, 0.5],
+            loss_weight=[0.5, 1.0, 1.0, 0.5],
             num_classes=num_instance_classes,
             non_object_weight=0.1,
             fix_dice_loss_weight=True,
@@ -163,8 +167,8 @@ test_pipeline = [
 
 # run settings
 train_dataloader = dict(
-    batch_size=16,  # 4
-    num_workers=16,
+    batch_size=4,  # 4
+    num_workers=8,
     dataset=dict(
         type=dataset_type,
         ann_file='scannet_oneformer3d_infos_train.pkl',
@@ -174,6 +178,8 @@ train_dataloader = dict(
         scene_idxs=None,
         test_mode=False))
 val_dataloader = dict(
+    batch_size=2,
+    num_workers=8,
     dataset=dict(
         type=dataset_type,
         ann_file='scannet_oneformer3d_infos_val.pkl',
@@ -212,27 +218,20 @@ test_evaluator = val_evaluator
 
 optim_wrapper = dict(
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=1e-5, weight_decay=0.05),
-    clip_grad=dict(max_norm=10, norm_type=2)
-)
+    optimizer=dict(type='AdamW', lr=1e-6, weight_decay=0.05),
+    clip_grad=dict(max_norm=10, norm_type=2))
 
-param_scheduler = dict(type='PolyLR', begin=0, end=100, power=0.8)
-# param_scheduler = dict(
-#     type='CosineAnnealingLR',
-#     by_epoch=True,
-#     T_max=100,  # 最大 epoch 数
-#     eta_min=1e-7  # 最小学习率
-# )
+param_scheduler = dict(type='PolyLR', begin=0, end=num_epochs, power=0.8)
 
 custom_hooks = [dict(type='EmptyCacheHook', after_iter=True)]
 default_hooks = dict(
-     checkpoint=dict(interval=1, max_keep_ckpts=100))
+    checkpoint=dict(interval=1, max_keep_ckpts=100))
 
 load_from = 'work_dirs/tmp/sstnet_scannet.pth'
 
 train_cfg = dict(
     type='EpochBasedTrainLoop',
-    max_epochs=100,
-    dynamic_intervals=[(1,100),(512 - 100,1)])
+    max_epochs=num_epochs,
+    dynamic_intervals=[(1, num_epochs),(num_epochs,1)])
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
