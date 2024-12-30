@@ -86,4 +86,19 @@ RUN pip install --no-deps \
     blinker==1.7.0 \
     itsdangerous==2.1.2 \
     importlib_metadata==2.1.2 \
-    zipp==3.17.0
+    zipp==3.17.0 \
+    torch-geometric
+
+# Install Pointcept
+RUN git clone https://github.com/Pointcept/Pointcept.git \
+    && cd Pointcept/libs/pointops \
+    && python setup.py install \
+    && cd ../..
+
+RUN conda install ninja -y
+RUN conda install h5py pyyaml -c anaconda -y
+RUN conda install sharedarray tensorboard tensorboardx yapf addict einops scipy plyfile termcolor timm -c conda-forge -y
+RUN conda install pytorch-cluster pytorch-scatter pytorch-sparse -c pyg -y
+
+# Install Flash Attention
+RUN pip install flash-attn --no-build-isolation

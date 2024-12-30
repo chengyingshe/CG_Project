@@ -104,5 +104,5 @@ optimizer:
 lr_scheduler:
   type: PolyLR
   max_iters: 512
-  power: 0.9
+  power: 2.0
   constant_ending: 0.0
