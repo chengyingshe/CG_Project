@@ -4,3 +4,5 @@
 !test_results/**
 !oneformer3d/
 !oneformer3d/**
+!SPFormer/
+!SPFormer/**
